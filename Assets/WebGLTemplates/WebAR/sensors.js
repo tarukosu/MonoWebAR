@@ -60,13 +60,17 @@ window.onload = function () {
     // ブラウザが画面を更新するたびに、onAnimate が呼ばれる
     function onAnimate () {
         try{
-            // センサデータを Unity アプリケーションに送信する
+            // 起動中のロゴが消えたらセンサデータを Unity アプリケーションに送信する
             if(gameInstance.logo.style.display == "none"){
-                var img = capture();
+                if(useCamera){
+                    // カメラ画像を送信
+                    let img = capture();
+                    gameInstance.SendMessage('SensorManager', 'UpdateCameraImage', img);
+                }
+                // 回転、加速度、緯度経度を送信
                 gameInstance.SendMessage('SensorManager', 'UpdateEulerAngles', JSON.stringify(eulerAngles));
                 gameInstance.SendMessage('SensorManager', 'UpdateAcceleration', JSON.stringify(acceleration));
                 gameInstance.SendMessage('SensorManager', 'UpdateGpsPosition', JSON.stringify(gpsPosition));
-                gameInstance.SendMessage('SensorManager', 'UpdateCameraImage', img);
             }
         }catch(e){
             console.log(e);
@@ -95,22 +99,25 @@ window.onload = function () {
         window.addEventListener('devicemotion', deviceMotionHandler, true);
     }
 
-    // 現在位置（緯度、経度）を取得
-    var options = {
+    // 現在位置を取得する際のパラメータ
+    let geoOptions = {
         enableHighAccuracy: false,
         timeout: 5000,
         maximumAge: 0
     }
 
-    function success(pos) {
-        var coords = pos.coords;
-        gpsPosition.latitude = coords.latitude;
-        gpsPosition.longitude = coords.longitude;
-    }
-
-    function error(err) {
-        console.warn('ERROR(' + err.code + '): ' + err.message);
-    }
-
-    navigator.geolocation.watchPosition(success, error, options);
+    // 現在位置を取得開始
+    navigator.geolocation.watchPosition(
+        function(pos){
+            // 位置取得成功時のコールバック
+            // 緯度経度を取得
+            let coords = pos.coords;
+            gpsPosition.latitude = coords.latitude;
+            gpsPosition.longitude = coords.longitude;
+        },
+        function(err){
+            // 位置取得失敗時のコールバック
+            console.warn('ERROR(' + err.code + '): ' + err.message);
+        },
+        geoOptions);
 };
