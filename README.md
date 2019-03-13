@@ -3,5 +3,5 @@
 - Unity 2018.3.8f1
 
 # 注意事項
-このプロジェクトには Space Robot Kyle アセットは含まれていません。
-Asset Store からSpace Robot Kyleをインポートしてください。
+このプロジェクトには Space Robot Kyle アセットは含まれていません。  
+Asset Store から Space Robot Kyle をダウンロードし、プロジェクトにインポートしてください。
