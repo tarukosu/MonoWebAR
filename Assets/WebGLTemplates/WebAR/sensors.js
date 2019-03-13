@@ -28,7 +28,7 @@ window.onload = function () {
         canvas.style.display = "none";
         video.style.display = "none";
 
-        function capture() {
+        var capture = function() {
             // 解像度が高いと処理に時間がかかるため、サイズを 1/4 にする
             canvas.width = video.videoWidth / 4;
             canvas.height = video.videoHeight / 4;
@@ -38,7 +38,7 @@ window.onload = function () {
         }
     }
 
-    // センサー値の初期値を設定
+    // センサ値の初期値を設定
     let eulerAngles = {
         x:0,
         y:0,
