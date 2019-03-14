@@ -33,6 +33,8 @@ public class SensorManager : MonoBehaviour
 
     // カメラ画像を表示するテクスチャ
     Texture2D arCameraTexture;
+    // アスペクト比を保ったまま画像を拡大するために利用するコンポーネント
+    AspectRatioFitter aspectRationFitter;
 
     // 各データの初期化
     EulerAngles eulerAngles = new EulerAngles();
@@ -87,12 +89,15 @@ public class SensorManager : MonoBehaviour
         }
         var image = data[1];
 
-        // テクスチャが初期化されているかどうか
-        var initialize = arCameraTexture == null;
-        if (initialize)
+        // テクスチャが作成されていない場合
+        if (arCameraTexture == null)
         {
             // 新しいテクスチャを作成
             arCameraTexture = new Texture2D(1, 1);
+            // AspectRatioFitter コンポーネントを追加
+            // アスペクト比を保ったまま画像を最大化させる
+            aspectRationFitter = ARCameraImage.gameObject.AddComponent<AspectRatioFitter>();
+            aspectRationFitter.aspectMode = AspectRatioFitter.AspectMode.FitInParent;
         }
 
         // base64 エンコードされた文字列を元に戻す
@@ -101,13 +106,8 @@ public class SensorManager : MonoBehaviour
         arCameraTexture.LoadImage(bytes);
         ARCameraImage.texture = arCameraTexture;
 
-        // AspectRatioFitter を使ってアスペクト比を保ったまま画像を最大化する
-        if (initialize)
-        {
-            var aspectRationFitter = ARCameraImage.gameObject.AddComponent<AspectRatioFitter>();
-            aspectRationFitter.aspectMode = AspectRatioFitter.AspectMode.FitInParent;
-            aspectRationFitter.aspectRatio = (float)arCameraTexture.width / arCameraTexture.height;
-        }
+        // アスペクト比をカメラ画像に合わせて設定
+        aspectRationFitter.aspectRatio = (float)arCameraTexture.width / arCameraTexture.height;
     }
 
     void UpdateText()

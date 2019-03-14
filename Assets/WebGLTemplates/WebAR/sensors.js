@@ -10,7 +10,15 @@ window.onload = function () {
         let media = navigator.mediaDevices.getUserMedia({
             video: {
                 facingMode: "environment", // 背面カメラを指定
-                width: {max: 640} //解像度を指定
+                // なるべく小さな解像度を使うように解像度を指定
+                advanced: [
+                    {maxWidth: 2560},
+                    {maxWidth: 1920},
+                    {maxWidth: 1280},
+                    {maxWidth: 1024},
+                    {maxWidth: 640},
+                    {maxWidth: 320},
+                ]
             },
             audio: false, // 音声は利用しない
         });
@@ -24,14 +32,22 @@ window.onload = function () {
         let canvas = document.getElementById("canvas");
         let ctx = canvas.getContext("2d");
 
-        // canvas, video は画面には表示しない
-        canvas.style.display = "none";
-        video.style.display = "none";
+        // iOS かどうかのチェック
+        const ua = navigator.userAgent;
+        const isIOS = ua.indexOf("iPhone") >= 0
+            || ua.indexOf("iPad") >= 0
+            || ua.indexOf("iPod") >= 0;
+
+        // iOS ではカメラ映像を非表示にすると drawImage が動作しない
+        if(!isIOS){
+            canvas.style.display = "none";
+            video.style.display = "none";
+        }
 
         var capture = function() {
             // 解像度が高いと処理に時間がかかるため、サイズを 1/4 にする
-            canvas.width = video.videoWidth / 4;
-            canvas.height = video.videoHeight / 4;
+            canvas.width = Math.floor(video.videoWidth / 4);
+            canvas.height = Math.floor(video.videoHeight / 4);
             // カメラ映像をキャンバスに書き出し、png 形式で返す
             ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
             return canvas.toDataURL('image/png');
@@ -55,7 +71,6 @@ window.onload = function () {
         latitude : 0,
         longitude: 0
     }
-
 
     // ブラウザが画面を更新するたびに、onAnimate が呼ばれる
     function onAnimate () {
