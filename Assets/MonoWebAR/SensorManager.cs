@@ -45,7 +45,6 @@ public class SensorManager : MonoBehaviour
     {
 #if UNITY_EDITOR
         UpdateEulerAngles("{\"x\": 270, \"y\": 30, \"z\": 0}");
-        UpdateCameraImage("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH4wMMACgEC0JsVwAAAB1pVFh0Q29tbWVudAAAAAAAQ3JlYXRlZCB3aXRoIEdJTVBkLmUHAAAADElEQVQI12NgYPgPAAEDAQDZqt2zAAAAAElFTkSuQmCC");
 #endif
     }
 
